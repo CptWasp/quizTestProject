@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">    <title>Админ Главная страница</title>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <title>Админ Главная страница</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
 
 </head>
@@ -37,15 +38,15 @@
         <div class="col-12">
             <#if alert ??>
             <h6 class="alert alert-${alertType}">${alert}</h6>
-        </#if>
+            </#if>
+        </div>
     </div>
-</div>
 </div>
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-7">
-            <h1>Изменить праметры опроса</h1>
+            <h1>Праметры опроса</h1>
         </div>
     </div>
 </div>
@@ -54,24 +55,14 @@
 
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-10">
-
-                <#if quizEntity??>
-                <form method="post" action="/saveRedactedQuiz">
-                    <span>Название</span><input class="form-control my-2" placeholder="Название опроса" type="text" id="name" name="name" value="${quizEntity.name}">
-                    <span>Начало</span><input class="form-control my-2" type="date" id="dateStart" name="dateStart" value="${quizEntity.dateStart}">
-                    <span>Конец</span><input class="form-control my-2" type="date" id="dateEnd" name="dateEnd" value="${quizEntity.dateEnd}">
-                    <span>Описание</span><input class="form-control my-2" placeholder="Описание" type="text" id="annotation" name="annotation" value="${quizEntity.annotation}">
-
-                    <input type="submit" id="send-quiz" class="btn btn-success mt-2" value="Создать опрос">
-                </form>
-                <#else>
-                <div>Беда!</div>
-            </#if>
-
+            <div class="col-6">
+                    <span class="my-2">Название: ${quizEntity.name}</span><br>
+                    <span class="my-2">Начало: ${quizEntity.dateStart}</span><br>
+                    <span class="my-2">Конец: ${quizEntity.dateEnd}</span><br>
+                    <span class="my-2">Описание: ${quizEntity.annotation}</span><br>
+            </div>
         </div>
     </div>
-</div>
 
 
 <br>
@@ -90,15 +81,90 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-7">
-                <input />
+                <form action="/saveQuestion" id="myForm" method="post">
+                    <input id="quiz" type="hidden" value="${quiz}">
+                    <span>Текст вопроса: </span><input id="questionText" class="form-control" name="questionText"/>
+                    <br>
+                    
+                    <span>Тип ответа: </span> 
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" value="0" name="flexRadioDefault" id="flexRadioDefault1" checked>
+                      <label class="form-check-label" for="flexRadioDefault1">
+                        текстовый ответ
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input check" type="radio" value="1" name="flexRadioDefault" id="flexRadioDefault2">
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        один ответ
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input check" type="radio" value="2" name="flexRadioDefault" id="flexRadioDefault2">
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        несколько ответов
+                      </label>
+                    </div>
+                    <br>
+                    <br>
+                    <div id="answers">
+                        
+                    </div>
+                    <div id="answers-control">
+                        
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-3">
+                <input class="btn btn-secondary" type="button" value="Сохранить вопрос" id="save"> 
+            </div>
+        </div>
+    </div>
+    
+    
 
+<script>
+    var answerArr = [];
+    
+    function saveAnswer(){
+        $("#answers").append("<p>"+$("#answerText").val()+"</p>");
+        answerArr.push($("#answerText").val());
+        $("#answerText").empty();
+    }
+    
+    
+    $(".check").change(function(){
+        $("#answers-control").empty();
+        $("#answers-control").append("<input id='answerText' class='form-control' type='text'>");
+        $("#answers-control").append("<br><input type='button' class='btn btn-danger' onclick='saveAnswer()' value='Сохранить ответ'>");
+    });
+</script>
 
-
-
+    
+    
+<script>
+    $("#save").on("click", function(){
+        var myJsonString = JSON.stringify(answerArr);
+        console.log(myJsonString);
+        console.log($('input[name=radioName]:checked', '#myForm').val());
+        $.ajax({
+            url: "/saveQuestion",
+            method: "POST",
+            dataType: "JSON",
+            data: { quizId: $("#quiz").val(), questionText: $("#questionText").val(),
+            questionType: $('input[name=flexRadioDefault]:checked', '#myForm').val(), answersArray: myJsonString },
+            success: function(data){
+		        alert(data);
+		    }
+        });
+    });
+</script>
 
 
 

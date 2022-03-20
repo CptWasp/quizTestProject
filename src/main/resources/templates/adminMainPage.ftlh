@@ -92,9 +92,10 @@
                             <li class="list-group-item">Описание: ${quiz.annotation}</li>
                               <li class="list-group-item">
                                   <form method="get" action="/deleteQuiz/${quiz.id}">
-                                    <input class="btn btn-danger" type="submit" value="Удалить">
+                                    <input class="btn btn-danger mt-1" type="submit" value="Удалить">
                                   </form>
-                                  <a class="btn btn-primary  ml-1" href="/redactQuiz/${quiz.id}">Измененить</a>
+                                  <a class="btn btn-primary  mt-1" href="/redactQuiz/${quiz.id}">Измененить</a>
+                                  <a class="btn btn-primary  mt-1" href="/createQuestion/${quiz.id}">Добавить вопросы в Опрос</a>
                               </li>
                           </ul>
                         </div>

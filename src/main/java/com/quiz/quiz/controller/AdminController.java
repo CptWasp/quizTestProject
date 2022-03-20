@@ -19,10 +19,6 @@ public class AdminController {
     public QuizRepo quizRepo;
 
 
-
-
-
-
     @GetMapping("/quizList")
     public String mainPage(Model model){
         Iterable<QuizEntity> quizList = quizRepo.findAll();
@@ -93,6 +89,19 @@ public class AdminController {
 
         return "redirect:/quizList";
     }
+
+    @GetMapping("/createQuestion/{quiz}")
+    public String addQuestions(@PathVariable Long quiz, Model model){
+
+        QuizEntity quizEntity = quizRepo.findOneById(quiz);
+
+
+        model.addAttribute("quizEntity", quizEntity);
+        model.addAttribute("quiz", quiz);
+        return "QuestionsCreate";
+    }
+
+
 
 
 }
