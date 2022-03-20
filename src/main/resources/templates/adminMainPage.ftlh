@@ -32,11 +32,11 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container mt-2">
     <div class="row justify-content-center">
         <div class="col-12">
             <#if alert ??>
-            <h3 class="alert alert-${alertType}">${alert}</h3>
+            <h6 class="alert alert-${alertType}">${alert}</h6>
             </#if>
         </div>
     </div>
@@ -81,7 +81,7 @@
             <div class="card-group">
                     <#if quizList??>
                     <#list quizList as quiz>
-
+                        <div>
                         <div class="card m-2 shadow p-3 mb-5 bg-white rounde" style="width: 18rem;">
                           <div class="card-header">
                             ${quiz.name}
@@ -90,8 +90,14 @@
                             <li class="list-group-item">Начало: ${quiz.dateStart}</li>
                             <li class="list-group-item">Конец: ${quiz.dateEnd}</li>
                             <li class="list-group-item">Описание: ${quiz.annotation}</li>
-                            <li class="list-group-item"><a href="/redactQuiz/${quiz.id}"></a></li>
+                              <li class="list-group-item">
+                                  <form method="get" action="/deleteQuiz/${quiz.id}">
+                                    <input class="btn btn-danger" type="submit" value="Удалить">
+                                  </form>
+                                  <a class="btn btn-primary  ml-1" href="/redactQuiz/${quiz.id}">Измененить</a>
+                              </li>
                           </ul>
+                        </div>
                         </div>
 
                     </#list>

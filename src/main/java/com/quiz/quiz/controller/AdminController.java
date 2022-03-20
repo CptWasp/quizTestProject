@@ -3,14 +3,14 @@ package com.quiz.quiz.controller;
 import com.quiz.quiz.entity.QuizEntity;
 import com.quiz.quiz.repo.QuizRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Optional;
 
 @Controller
 public class AdminController {
@@ -57,7 +57,42 @@ public class AdminController {
     }
 
 
+    @GetMapping("/deleteQuiz/{quiz}")
+    public String deleteQuiz(@PathVariable Long quiz){
+        quizRepo.deleteById(quiz);
 
+        return "redirect:/quizList";
+    }
+
+    @GetMapping("/")
+    public String redirectToQuiz(){
+        return "redirect:/quizList";
+    }
+
+
+    @GetMapping("/redactQuiz/{quiz}")
+    public String redactQuiz(@PathVariable Long quiz, Model model){
+        QuizEntity quizEntity = quizRepo.findOneById(quiz);
+
+        model.addAttribute("quizEntity", quizEntity);
+        return "quizEntityRedacting";
+    }
+
+
+    @PostMapping("/saveRedactedQuiz")
+    public String saveRedactedQuiz(@RequestParam("id") Long quiz, @RequestParam("name") String name,
+                                   @RequestParam("dateStart") String dateStart, @RequestParam("dateEnd") String dateEnd,
+                                   @RequestParam("annotation") String annotation){
+        QuizEntity quizEntity = quizRepo.findOneById(quiz);
+        quizEntity.setName(name);
+        quizEntity.setDateStart(dateStart);
+        quizEntity.setDateEnd(dateEnd);
+        quizEntity.setAnnotation(annotation);
+
+        quizRepo.save(quizEntity);
+
+        return "redirect:/quizList";
+    }
 
 
 }
